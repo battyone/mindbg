@@ -12,7 +12,6 @@ namespace MinDbg.CorDebug
         private readonly ICorDebug codebugger;
         private readonly CorDebuggerOptions options;
 
-
         /// <summary>
         /// Creates a new ICorDebug instance, initializes it
         /// and sets the managed callback listener.
@@ -45,8 +44,7 @@ namespace MinDbg.CorDebug
             si.hStdError = new Microsoft.Win32.SafeHandles.SafeFileHandle(new IntPtr(0), false);
 
             PROCESS_INFORMATION pi = new PROCESS_INFORMATION();
-            
-            ICorDebugProcess proc;
+
             codebugger.CreateProcess(
                                 exepath,
                                 exepath,
@@ -59,7 +57,7 @@ namespace MinDbg.CorDebug
                                 si,
                                 pi,
                                 CorDebugCreateProcessFlags.DEBUG_NO_SPECIAL_OPTIONS,
-                                out proc);
+                                out var proc);
             // FIXME close handles (why?)
             options.IsAttaching = false;
 
@@ -74,8 +72,7 @@ namespace MinDbg.CorDebug
         /// <returns></returns>
         public CorProcess DebugActiveProcess(Int32 pid, Boolean win32Attach = false)
         {
-            ICorDebugProcess coproc;
-            codebugger.DebugActiveProcess(Convert.ToUInt32(pid), win32Attach ? 1 : 0, out coproc);
+            codebugger.DebugActiveProcess(Convert.ToUInt32(pid), win32Attach ? 1 : 0, out var coproc);
             options.IsAttaching = true;
 
             return CorProcess.GetOrCreateCorProcess(coproc, options);

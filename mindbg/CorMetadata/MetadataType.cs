@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
 using MinDbg.NativeApi;
 
@@ -12,22 +13,20 @@ namespace MinDbg.CorMetadata
 
         internal MetadataType(IMetadataImport importer, Int32 typeToken)
         {
-            this.p_importer = importer;
-            this.p_typeToken = typeToken;
+            p_importer = importer;
+            p_typeToken = typeToken;
         }
 
-        public override System.Reflection.MethodInfo[] GetMethods(System.Reflection.BindingFlags bindingAttr)
+        public override MethodInfo[] GetMethods(BindingFlags bindingAttr)
         {
             IntPtr hEnum = new IntPtr();
-            ArrayList methods = new ArrayList();
+            var methods = new List<MethodInfo>();
 
-            Int32 methodToken;
             try
             {
                 while (true)
                 {
-                    Int32 size;
-                    p_importer.EnumMethods(ref hEnum, p_typeToken, out methodToken, 1, out size);
+                    p_importer.EnumMethods(ref hEnum, p_typeToken, out var methodToken, 1, out var size);
                     if (size == 0)
                         break;
                     methods.Add(new MetadataMethodInfo(p_importer, methodToken));
@@ -37,45 +36,38 @@ namespace MinDbg.CorMetadata
             {
                 p_importer.CloseEnum(hEnum);
             }
-            return (MethodInfo[])methods.ToArray(typeof(MethodInfo));
+            return methods.ToArray();
         }
 
-        public override System.Reflection.Assembly Assembly
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public override Assembly Assembly => throw new NotImplementedException();
 
-        public override string AssemblyQualifiedName
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public override string AssemblyQualifiedName => throw new NotImplementedException();
 
-        public override Type BaseType
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public override Type BaseType => throw new NotImplementedException();
 
-        public override string FullName
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public override string FullName => throw new NotImplementedException();
 
-        public override Guid GUID
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public override Guid GUID => throw new NotImplementedException();
 
-        protected override System.Reflection.TypeAttributes GetAttributeFlagsImpl()
+        public override Module Module => throw new NotImplementedException();
+
+        public override string Namespace => throw new NotImplementedException();
+
+        public override Type UnderlyingSystemType => throw new NotImplementedException();
+
+        public override string Name => throw new NotImplementedException();
+
+        protected override TypeAttributes GetAttributeFlagsImpl()
         {
             throw new NotImplementedException();
         }
 
-        protected override System.Reflection.ConstructorInfo GetConstructorImpl(System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Reflection.CallingConventions callConvention, Type[] types, System.Reflection.ParameterModifier[] modifiers)
+        protected override ConstructorInfo GetConstructorImpl(BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
         {
             throw new NotImplementedException();
         }
 
-        public override System.Reflection.ConstructorInfo[] GetConstructors(System.Reflection.BindingFlags bindingAttr)
+        public override ConstructorInfo[] GetConstructors(BindingFlags bindingAttr)
         {
             throw new NotImplementedException();
         }
@@ -85,22 +77,22 @@ namespace MinDbg.CorMetadata
             throw new NotImplementedException();
         }
 
-        public override System.Reflection.EventInfo GetEvent(string name, System.Reflection.BindingFlags bindingAttr)
+        public override EventInfo GetEvent(string name, BindingFlags bindingAttr)
         {
             throw new NotImplementedException();
         }
 
-        public override System.Reflection.EventInfo[] GetEvents(System.Reflection.BindingFlags bindingAttr)
+        public override EventInfo[] GetEvents(BindingFlags bindingAttr)
         {
             throw new NotImplementedException();
         }
 
-        public override System.Reflection.FieldInfo GetField(string name, System.Reflection.BindingFlags bindingAttr)
+        public override FieldInfo GetField(string name, BindingFlags bindingAttr)
         {
             throw new NotImplementedException();
         }
 
-        public override System.Reflection.FieldInfo[] GetFields(System.Reflection.BindingFlags bindingAttr)
+        public override FieldInfo[] GetFields(BindingFlags bindingAttr)
         {
             throw new NotImplementedException();
         }
@@ -115,32 +107,32 @@ namespace MinDbg.CorMetadata
             throw new NotImplementedException();
         }
 
-        public override System.Reflection.MemberInfo[] GetMembers(System.Reflection.BindingFlags bindingAttr)
+        public override MemberInfo[] GetMembers(BindingFlags bindingAttr)
         {
             throw new NotImplementedException();
         }
 
-        protected override System.Reflection.MethodInfo GetMethodImpl(string name, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Reflection.CallingConventions callConvention, Type[] types, System.Reflection.ParameterModifier[] modifiers)
+        protected override MethodInfo GetMethodImpl(string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
         {
             throw new NotImplementedException();
         }
 
-        public override Type GetNestedType(string name, System.Reflection.BindingFlags bindingAttr)
+        public override Type GetNestedType(string name, BindingFlags bindingAttr)
         {
             throw new NotImplementedException();
         }
 
-        public override Type[] GetNestedTypes(System.Reflection.BindingFlags bindingAttr)
+        public override Type[] GetNestedTypes(BindingFlags bindingAttr)
         {
             throw new NotImplementedException();
         }
 
-        public override System.Reflection.PropertyInfo[] GetProperties(System.Reflection.BindingFlags bindingAttr)
+        public override PropertyInfo[] GetProperties(BindingFlags bindingAttr)
         {
             throw new NotImplementedException();
         }
 
-        protected override System.Reflection.PropertyInfo GetPropertyImpl(string name, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, Type returnType, Type[] types, System.Reflection.ParameterModifier[] modifiers)
+        protected override PropertyInfo GetPropertyImpl(string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers)
         {
             throw new NotImplementedException();
         }
@@ -150,7 +142,7 @@ namespace MinDbg.CorMetadata
             throw new NotImplementedException();
         }
 
-        public override object InvokeMember(string name, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object target, object[] args, System.Reflection.ParameterModifier[] modifiers, System.Globalization.CultureInfo culture, string[] namedParameters)
+        public override object InvokeMember(string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters)
         {
             throw new NotImplementedException();
         }
@@ -180,21 +172,6 @@ namespace MinDbg.CorMetadata
             throw new NotImplementedException();
         }
 
-        public override System.Reflection.Module Module
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public override string Namespace
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public override Type UnderlyingSystemType
-        {
-            get { throw new NotImplementedException(); }
-        }
-
         public override object[] GetCustomAttributes(Type attributeType, bool inherit)
         {
             throw new NotImplementedException();
@@ -208,11 +185,6 @@ namespace MinDbg.CorMetadata
         public override bool IsDefined(Type attributeType, bool inherit)
         {
             throw new NotImplementedException();
-        }
-
-        public override string Name
-        {
-            get { throw new NotImplementedException(); }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using MinDbg.NativeApi;
+﻿using System;
+using MinDbg.NativeApi;
 
 namespace MinDbg.CorDebug
 {
@@ -19,10 +20,7 @@ namespace MinDbg.CorDebug
         /// Gets the COM app domain.
         /// </summary>
         /// <value>The COM app domain.</value>
-        private ICorDebugAppDomain ComAppDomain
-        {
-            get { return (ICorDebugAppDomain)this.cocntrl; }
-        }
+        private ICorDebugAppDomain ComAppDomain => (ICorDebugAppDomain)this.cocntrl;
 
         /// <summary>
         /// Gets the process.
@@ -30,10 +28,11 @@ namespace MinDbg.CorDebug
         /// <returns></returns>
         public CorProcess GetProcess()
         {
-            ICorDebugProcess proc;
-            ComAppDomain.GetProcess(out proc);
+            ComAppDomain.GetProcess(out var proc);
 
             return proc != null ? CorProcess.GetOrCreateCorProcess(proc, options) : null;
         }
+
+        public String Name => name;
     }
 }

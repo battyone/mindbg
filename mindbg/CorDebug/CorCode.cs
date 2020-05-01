@@ -22,8 +22,7 @@ namespace MinDbg.CorDebug
         /// <returns>A newly created code breakpoint.</returns>
         public CorBreakpoint CreateBreakpoint(Int32 iloffset)
         {
-            ICorDebugFunctionBreakpoint cobreak;
-            cocode.CreateBreakpoint((UInt32)iloffset, out cobreak);
+            cocode.CreateBreakpoint((UInt32)iloffset, out var cobreak);
 
             return new CorFunctionBreakpoint(cobreak, options);
         }

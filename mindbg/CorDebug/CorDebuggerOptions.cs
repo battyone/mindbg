@@ -45,8 +45,8 @@ namespace MinDbg.CorDebug
         /// </value>
         internal bool IsAttaching
         {
-            get { return p_isAttaching;  }
-            set { p_isAttaching = value; }
+            get => p_isAttaching;
+            set => p_isAttaching = value;
         }
     }
 }

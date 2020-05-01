@@ -46,8 +46,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         {
             get 
             {
-                int length;
-                m_target.GetSearchPathLength(out length);
+                m_target.GetSearchPathLength(out var length);
                 return length;
             }
         }
@@ -56,8 +55,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         {
             get 
             {
-                int length;
-                m_target.GetSearchPath(0, out length, null);
+                m_target.GetSearchPath(0, out var length, null);
                 StringBuilder path = new StringBuilder(length);
                 m_target.GetSearchPath(length, out length, path);
                 return path.ToString();
@@ -68,8 +66,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         {
             get 
             {
-                int hr;
-                m_target.GetHRESULT(out hr);
+                m_target.GetHRESULT(out var hr);
                 return hr;
             }
          }

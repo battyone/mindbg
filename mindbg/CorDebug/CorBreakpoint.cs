@@ -34,8 +34,7 @@ namespace MinDbg.CorDebug
         /// </returns>
         public bool IsActive()
         {
-            Int32 active;
-            cobreakpoint.IsActive(out active);
+            cobreakpoint.IsActive(out var active);
             return active != 0;
         }
     }
@@ -63,8 +62,7 @@ namespace MinDbg.CorDebug
         /// <returns></returns>
         public CorFunction GetFunction()
         {
-            ICorDebugFunction cofunc;
-            p_cobreakpoint.GetFunction(out cofunc);
+            p_cobreakpoint.GetFunction(out var cofunc);
             return new CorFunction(cofunc, options);
         }
 
@@ -74,8 +72,7 @@ namespace MinDbg.CorDebug
         /// <returns></returns>
         public UInt32 GetOffset()
         {
-            UInt32 offset;
-            p_cobreakpoint.GetOffset(out offset);
+            p_cobreakpoint.GetOffset(out var offset);
             return offset;
         }
     }

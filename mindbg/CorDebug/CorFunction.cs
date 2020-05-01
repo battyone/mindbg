@@ -25,8 +25,7 @@ namespace MinDbg.CorDebug
         /// <returns>A function breakpoint instance.</returns>
         public CorFunctionBreakpoint CreateBreakpoint()
         {
-            ICorDebugFunctionBreakpoint funcBreakpoint;
-            cofunc.CreateBreakpoint(out funcBreakpoint);
+            cofunc.CreateBreakpoint(out var funcBreakpoint);
             return new CorFunctionBreakpoint(funcBreakpoint, options);
         }
 
@@ -36,8 +35,7 @@ namespace MinDbg.CorDebug
         /// <returns></returns>
         public CorModule GetModule()
         {
-            ICorDebugModule comodule;
-            cofunc.GetModule(out comodule);
+            cofunc.GetModule(out var comodule);
             return new CorModule(comodule, options);
         }
 
@@ -47,8 +45,7 @@ namespace MinDbg.CorDebug
         /// <returns></returns>
         public UInt32 GetToken()
         {
-            UInt32 token;
-            cofunc.GetToken(out token);
+            cofunc.GetToken(out var token);
             return token;
         }
 
@@ -58,8 +55,7 @@ namespace MinDbg.CorDebug
         /// <returns>The function version number.</returns>
         public UInt32 GetVersionNumber()
         {
-            UInt32 version;
-            ((ICorDebugFunction2)cofunc).GetVersionNumber(out version);
+            ((ICorDebugFunction2)cofunc).GetVersionNumber(out var version);
             return version;
         }
 
@@ -176,10 +172,7 @@ namespace MinDbg.CorDebug
         /// <returns></returns>
         public CorSourcePosition GetSourcePositionFromFrame(CorFrame frame)
         {
-            UInt32 ip;
-            CorDebugMappingResult mappingResult;
-
-            frame.GetIP(out ip, out mappingResult);
+            frame.GetIP(out var ip, out var mappingResult);
 
             if (mappingResult == CorDebugMappingResult.MAPPING_NO_INFO ||
                 mappingResult == CorDebugMappingResult.MAPPING_UNMAPPED_ADDRESS)

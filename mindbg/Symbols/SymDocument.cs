@@ -74,8 +74,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
             get
             {
                 StringBuilder URL;
-                int cchUrl;
-                m_unmanagedDocument.GetURL(0, out cchUrl, null);
+                m_unmanagedDocument.GetURL(0, out var cchUrl, null);
                 URL = new StringBuilder(cchUrl);
                 m_unmanagedDocument.GetURL(cchUrl, out cchUrl, URL);
                 return URL.ToString();
@@ -182,13 +181,6 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
             return Data;
         }
                                       
-        internal ISymUnmanagedDocument InternalDocument
-        {
-            get
-            {
-                return m_unmanagedDocument;
-            }
-        }
-                                      
+        internal ISymUnmanagedDocument InternalDocument => m_unmanagedDocument;
     }
 }

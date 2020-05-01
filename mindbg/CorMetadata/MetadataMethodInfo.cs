@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using MinDbg.NativeApi;
@@ -7,32 +8,24 @@ namespace MinDbg.CorMetadata
 {
     internal sealed class MetadataMethodInfo : MethodInfo
     {
-        private readonly Int32 p_methodToken;
         private readonly Int32 p_classToken;
         private readonly IMetadataImport p_importer;
-        private readonly String p_name;
 
         internal MetadataMethodInfo(IMetadataImport importer, Int32 methodToken)
         {
             p_importer = importer;
-            p_methodToken = methodToken;
-
-            int size;
-            uint pdwAttr;
-            IntPtr ppvSigBlob;
-            uint pulCodeRVA, pdwImplFlags;
-            uint pcbSigBlob;
+            MetadataToken = methodToken;
 
             p_importer.GetMethodProps((uint)methodToken,
                                       out p_classToken,
                                       null,
                                       0,
-                                      out size,
-                                      out pdwAttr,
-                                      out ppvSigBlob,
-                                      out pcbSigBlob,
-                                      out pulCodeRVA,
-                                      out pdwImplFlags);
+                                      out var size,
+                                      out _,
+                                      out _,
+                                      out _,
+                                      out _,
+                                      out _);
 
             StringBuilder szMethodName = new StringBuilder(size);
             p_importer.GetMethodProps((uint)methodToken,
@@ -40,40 +33,34 @@ namespace MinDbg.CorMetadata
                                     szMethodName,
                                     szMethodName.Capacity,
                                     out size,
-                                    out pdwAttr,
-                                    out ppvSigBlob,
-                                    out pcbSigBlob,
-                                    out pulCodeRVA,
-                                    out pdwImplFlags);
+                                    out _,
+                                    out _,
+                                    out _,
+                                    out _,
+                                    out _);
 
-            p_name = szMethodName.ToString();
+            Name = szMethodName.ToString();
             //m_methodAttributes = (MethodAttributes)pdwAttr;
         }
 
-        public override string Name
-        {
-            get { return p_name; }
-        }
+        public override string Name { get; }
 
-        public override int MetadataToken
-        {
-            get { return this.p_methodToken; }
-        }
+        public override int MetadataToken { get; }
 
         public override MethodInfo GetBaseDefinition()
         {
             throw new NotImplementedException();
         }
 
-        public override ICustomAttributeProvider ReturnTypeCustomAttributes
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public override ICustomAttributeProvider ReturnTypeCustomAttributes => throw new NotImplementedException();
 
-        public override MethodAttributes Attributes
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public override MethodAttributes Attributes => throw new NotImplementedException();
+
+        public override RuntimeMethodHandle MethodHandle => throw new NotImplementedException();
+
+        public override Type DeclaringType => throw new NotImplementedException();
+
+        public override Type ReflectedType => throw new NotImplementedException();
 
         public override MethodImplAttributes GetMethodImplementationFlags()
         {
@@ -85,19 +72,9 @@ namespace MinDbg.CorMetadata
             throw new NotImplementedException();
         }
 
-        public override object Invoke(object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, System.Globalization.CultureInfo culture)
+        public override object Invoke(object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture)
         {
             throw new NotImplementedException();
-        }
-
-        public override RuntimeMethodHandle MethodHandle
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public override Type DeclaringType
-        {
-            get { throw new NotImplementedException(); }
         }
 
         public override object[] GetCustomAttributes(Type attributeType, bool inherit)
@@ -113,11 +90,6 @@ namespace MinDbg.CorMetadata
         public override bool IsDefined(Type attributeType, bool inherit)
         {
             throw new NotImplementedException();
-        }
-
-        public override Type ReflectedType
-        {
-            get { throw new NotImplementedException(); }
         }
     }
 }

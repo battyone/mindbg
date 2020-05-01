@@ -6,22 +6,26 @@ namespace MinDbg.CorDebug
     /// </summary>
     public class CorEventArgs
     {
-        private readonly CorController controller;
+        private readonly CorController _controller;
+        private readonly string _eventInfo;
 
         /// <summary>
         /// Initializes the event instance.
         /// </summary>
         /// <param name="controller">Controller of the debugging process.</param>
-        public CorEventArgs(CorController controller)
+        public CorEventArgs(CorController controller, string eventInfo)
         {
-            this.controller = controller;
+            _controller = controller;
+            _eventInfo = eventInfo;
         }
 
         /// <summary>
         /// Gets the controller.
         /// </summary>
         /// <value>The controller.</value>
-        public CorController Controller { get { return this.controller;  } }
+        public CorController Controller => _controller;
+
+        public string EventInfo => _eventInfo;
 
         /// <summary>
         /// Gets or sets a value indicating whether debugging process should continue.
@@ -52,7 +56,7 @@ namespace MinDbg.CorDebug
         /// Gets the module.
         /// </summary>
         /// <value>The module.</value>
-        public CorModule Module { get { return this.module; } }
+        public CorModule Module => this.module;
     }
 
     /// <summary>
@@ -80,10 +84,7 @@ namespace MinDbg.CorDebug
         /// Gets the thread.
         /// </summary>
         /// <value>The thread.</value>
-        public CorThread Thread
-        {
-            get { return p_thread; }
-        }
+        public CorThread Thread => p_thread;
 
         /// <summary>
         /// Gets the process that the breakpoint was hit on.
@@ -98,9 +99,6 @@ namespace MinDbg.CorDebug
         /// Gets the breakpoint.
         /// </summary>
         /// <value>The breakpoint.</value>
-        public CorBreakpoint Breakpoint
-        {
-            get { return p_breakpoint; }
-        }
+        public CorBreakpoint Breakpoint => p_breakpoint;
     }
 }

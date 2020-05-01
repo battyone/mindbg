@@ -45,8 +45,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         
         public String GetName()
         {
-            int count;
-            m_target.GetName(0, out count, null);
+            m_target.GetName(0, out var count, null);
             StringBuilder name = new StringBuilder(count);
             m_target.GetName(count, out count, name);
             return name.ToString();

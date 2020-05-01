@@ -195,8 +195,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         {
             get
             {
-                SymbolToken entryPoint;
-                int hr = m_reader.GetUserEntryPoint(out entryPoint);
+                int hr = m_reader.GetUserEntryPoint(out var entryPoint);
                 if (hr == (int)HResult.E_FAIL)
                 {
                     // Not all assemblies have entry points

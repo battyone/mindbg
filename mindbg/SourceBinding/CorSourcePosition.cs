@@ -26,10 +26,7 @@ namespace MinDbg.SourceBinding
         /// Gets the path to the source file.
         /// </summary>
         /// <value>The path to the source file.</value>
-        public String Path
-        {
-            get { return p_path;  }
-        }
+        public String Path => p_path;
 
         /// <summary>
         /// Gets a value indicating whether this source position is connected with a special 
@@ -38,45 +35,30 @@ namespace MinDbg.SourceBinding
         /// <value>
         /// 	<c>true</c> if this instance is special; otherwise, <c>false</c>.
         /// </value>
-        public bool IsSpecial
-        {
-            get { return p_isSpecial; }
-        }
+        public bool IsSpecial => p_isSpecial;
 
         /// <summary>
         /// Gets the start line.
         /// </summary>
         /// <value>The start line.</value>
-        public Int32 StartLine
-        {
-            get { return p_startLine; }
-        }
+        public Int32 StartLine => p_startLine;
 
         /// <summary>
         /// Gets the end line.
         /// </summary>
         /// <value>The end line.</value>
-        public Int32 EndLine
-        {
-            get { return p_endLine; }
-        }
+        public Int32 EndLine => p_endLine;
 
         /// <summary>
         /// Gets the start column.
         /// </summary>
         /// <value>The start column.</value>
-        public Int32 StartColumn
-        {
-            get { return p_startColumn; }
-        }
+        public Int32 StartColumn => p_startColumn;
 
         /// <summary>
         /// Gets the end column.
         /// </summary>
         /// <value>The end column.</value>
-        public Int32 EndColumn
-        {
-            get { return p_endColumn;  }
-        }
+        public Int32 EndColumn => p_endColumn;
     }
 }

@@ -10,7 +10,7 @@ namespace MinDbg.CorDebug
     /// </summary>
     public abstract class WrapperBase : MarshalByRefObject
     {
-        private readonly Object coobject;
+        private readonly Object comobject;
 
         protected readonly CorDebuggerOptions options;
 
@@ -21,7 +21,7 @@ namespace MinDbg.CorDebug
         protected WrapperBase(Object value, CorDebuggerOptions options)
         {
             Debug.Assert(value != null);
-            this.coobject = value;
+            this.comobject = value;
             this.options = options;
         }
 
@@ -31,14 +31,14 @@ namespace MinDbg.CorDebug
         {
             if (!(value is WrapperBase))
                 return false;
-            return ((value as WrapperBase).coobject == this.coobject);
+            return ((value as WrapperBase).comobject == this.comobject);
         }
 
         /// <summary cref="System.Object.GetHashCode">
         /// </summary>
         public override int GetHashCode()
         {
-            return coobject.GetHashCode();
+            return comobject.GetHashCode();
         }
 
         /// <summary>

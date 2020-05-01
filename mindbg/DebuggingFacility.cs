@@ -83,8 +83,7 @@ namespace MinDbg
         // creates ICorDebug instance from ICLRRuntimeInfo
         private static CorDebugger CreateDebugger(ICLRRuntimeInfo runtime, CorDebuggerOptions options)
         {
-            Object res;
-            runtime.GetInterface(ref CLSID_ICorDebug, ref IID_ICorDebug, out res);
+            runtime.GetInterface(ref CLSID_ICorDebug, ref IID_ICorDebug, out var res);
 
             return new CorDebugger((ICorDebug)res, options);
         }

@@ -28,7 +28,6 @@ namespace MinDbg.CorDebug
             this.comodule = comodule;
         }
 
-
         /// <summary>
         /// Gets the symbol reader for a given module.
         /// </summary>
@@ -62,8 +61,7 @@ namespace MinDbg.CorDebug
         /// <returns>The process that hosts the module.</returns>
         public CorProcess GetProcess()
         {
-            ICorDebugProcess coproc;
-            comodule.GetProcess(out coproc);
+            comodule.GetProcess(out var coproc);
             return CorProcess.GetOrCreateCorProcess(coproc, options);
         }
 
@@ -74,8 +72,7 @@ namespace MinDbg.CorDebug
         /// <returns></returns>
         public CorFunction GetFunctionFromToken(Int32 token)
         {
-            ICorDebugFunction cofunc;
-            comodule.GetFunctionFromToken((UInt32)token, out cofunc);
+            comodule.GetFunctionFromToken((UInt32)token, out var cofunc);
             return new CorFunction(cofunc, options);
         }
 
@@ -86,8 +83,7 @@ namespace MinDbg.CorDebug
         public String GetName()
         {
             Char[] name = new Char[300];
-            UInt32 fetched;
-            comodule.GetName((UInt32)name.Length, out fetched, name);
+            comodule.GetName((UInt32)name.Length, out var fetched, name);
 
             // fetched - 1 because of the ending 0
             return new String(name, 0, (Int32)fetched - 1);
@@ -100,9 +96,8 @@ namespace MinDbg.CorDebug
         /// <returns>Metadata interface instance</returns>
         public T GetMetadataInterface<T>()
         {
-            Object res;
             Guid guid = typeof(T).GUID;
-            comodule.GetMetaDataInterface(ref guid, out res);
+            comodule.GetMetaDataInterface(ref guid, out var res);
             return (T)res;
         }
 

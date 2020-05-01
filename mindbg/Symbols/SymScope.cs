@@ -118,8 +118,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
 
         public ISymbolScope[] GetChildren()
         {
-            int count;
-            m_target.GetChildren(0, out count, null);
+            m_target.GetChildren(0, out var count, null);
             ISymUnmanagedScope[] uScopes = new ISymUnmanagedScope[count];
             m_target.GetChildren(count, out count, uScopes);
             
@@ -136,8 +135,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         { 
             get
             {
-                int offset;
-                m_target.GetStartOffset(out offset);
+                m_target.GetStartOffset(out var offset);
                 return offset;
             }
         }
@@ -147,16 +145,14 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         { 
             get
             {
-                int offset;
-                m_target.GetEndOffset(out offset);
+                m_target.GetEndOffset(out var offset);
                 return offset;
             }
         }
 
         public ISymbolVariable[] GetLocals()
         {
-            int count;
-            m_target.GetLocals(0, out count, null);
+            m_target.GetLocals(0, out var count, null);
             ISymUnmanagedVariable[] uVariables = new ISymUnmanagedVariable[count];
             m_target.GetLocals(count, out count, uVariables);
             
@@ -171,8 +167,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
 
         public ISymbolNamespace[] GetNamespaces()
         {
-            int count;
-            m_target.GetNamespaces(0, out count, null);
+            m_target.GetNamespaces(0, out var count, null);
             ISymUnmanagedNamespace[] uNamespaces = new ISymUnmanagedNamespace[count];
             m_target.GetNamespaces(count, out count, uNamespaces);
             
@@ -189,8 +184,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         {
             get
             {
-                int count;
-                m_target.GetLocalCount(out count);
+                m_target.GetLocalCount(out var count);
                 return count;
             }
         }
@@ -199,16 +193,14 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         {
             get
             {
-                int count;
-                ((ISymUnmanagedScope2)m_target).GetConstantCount(out count);
+                ((ISymUnmanagedScope2)m_target).GetConstantCount(out var count);
                 return count;
             }
         }
         
         public ISymbolConstant[] GetConstants()
         {
-            int count;
-            ((ISymUnmanagedScope2)m_target).GetConstants(0, out count, null);
+            ((ISymUnmanagedScope2)m_target).GetConstants(0, out var count, null);
             ISymUnmanagedConstant[] uConstants = new ISymUnmanagedConstant[count];
             ((ISymUnmanagedScope2)m_target).GetConstants(count, out count, uConstants);
             

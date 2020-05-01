@@ -89,8 +89,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         { 
             get
             {
-                SymbolToken token;                
-                m_unmanagedMethod.GetToken(out token);
+                m_unmanagedMethod.GetToken(out var token);
                 return token;
             }
         }
@@ -200,7 +199,6 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
             m_unmanagedMethod.GetRanges(((SymbolDocument)document).InternalDocument, line, column, cRanges, out cRanges, Ranges);
             return Ranges;
         }
-                                
 
         public ISymbolVariable[] GetParameters()
         {
@@ -264,7 +262,6 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
                 }
             }
             return pRetVal;
-            
         }
 
         public String GetFileNameFromOffset(int dwOffset)
@@ -288,13 +285,6 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
             return line;
         }
 
-        public ISymUnmanagedMethod InternalMethod
-        {
-            get 
-            {
-                return m_unmanagedMethod;
-            }
-        }
+        public ISymUnmanagedMethod InternalMethod => m_unmanagedMethod;
     }
-       
 }

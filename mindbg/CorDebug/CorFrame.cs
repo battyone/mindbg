@@ -48,8 +48,7 @@ namespace MinDbg.CorDebug
         /// <returns></returns>
         public CorFunction GetFunction()
         {
-            ICorDebugFunction cofunc;
-            coframe.GetFunction(out cofunc);
+            coframe.GetFunction(out var cofunc);
             return cofunc == null ? null : new CorFunction(cofunc, options);
         }
 
@@ -59,8 +58,7 @@ namespace MinDbg.CorDebug
         /// <returns></returns>
         public UInt32 GetFunctionToken()
         {
-            UInt32 token;
-            coframe.GetFunctionToken(out token);
+            coframe.GetFunctionToken(out var token);
             return token;
         }
 

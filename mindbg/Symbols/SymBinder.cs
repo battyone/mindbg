@@ -113,14 +113,12 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
     {
         ISymUnmanagedBinder m_binder;
 
-        
         public SymbolBinder()
         {
             Guid CLSID_CorSymBinder = new Guid("0A29FF9E-7F9C-4437-8B11-F424491E3931");
             m_binder = (ISymUnmanagedBinder3)Activator.CreateInstance(Type.GetTypeFromCLSID(CLSID_CorSymBinder));
         }
 
-        
         public ISymbolReader GetReader(IntPtr importer, String filename,
                                           String searchPath)
         {
@@ -134,7 +132,6 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
             return new SymReader(reader);
         }
 
-        
         public ISymbolReader GetReaderForFile(Object importer, String filename,
                                            String searchPath)
         {
@@ -182,7 +179,6 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
             return new SymReader(symReader);
         }
 
-        
         public ISymbolReader GetReaderForFile(Object importer, String fileName,
                                            String searchPath, SymSearchPolicies searchPolicy,
                                            IntPtr callback)
@@ -207,7 +203,6 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
             return new SymReader(reader);
         }
 
-        
         public ISymbolReader GetReaderFromStream(Object importer, IStream stream)
         {
             ISymUnmanagedReader reader = null;

@@ -61,8 +61,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
             get
             {
                 StringBuilder Name;
-                int cchName;
-                m_unmanagedVariable.GetName(0, out cchName, null);
+                m_unmanagedVariable.GetName(0, out var cchName, null);
                 Name = new StringBuilder(cchName);
                 m_unmanagedVariable.GetName(cchName, out cchName, Name);
                 return Name.ToString();
@@ -73,8 +72,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         { 
             get
             {
-                int RetVal;
-                m_unmanagedVariable.GetAttributes(out RetVal);
+                m_unmanagedVariable.GetAttributes(out var RetVal);
                 return (object)RetVal;
             }
         }
@@ -82,8 +80,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         public byte[] GetSignature()
         {
             byte[] Data;
-            int cData;
-            m_unmanagedVariable.GetSignature(0, out cData, null);
+            m_unmanagedVariable.GetSignature(0, out var cData, null);
             Data = new byte[cData];
             m_unmanagedVariable.GetSignature(cData, out cData, Data);
             return Data;
@@ -93,8 +90,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         {
            get
            {
-                int RetVal;
-                m_unmanagedVariable.GetAddressKind(out RetVal);
+               m_unmanagedVariable.GetAddressKind(out var RetVal);
                 return (SymAddressKind)RetVal;
            }
         }
@@ -103,8 +99,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         {
             get
             {
-                int RetVal;
-                m_unmanagedVariable.GetAddressField1(out RetVal);
+                m_unmanagedVariable.GetAddressField1(out var RetVal);
                 return RetVal;
             }
         }
@@ -113,8 +108,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         {
             get
             {
-                int RetVal;
-                m_unmanagedVariable.GetAddressField2(out RetVal);
+                m_unmanagedVariable.GetAddressField2(out var RetVal);
                 return RetVal;
             }
         }
@@ -123,8 +117,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         { 
             get
             {
-                int RetVal;
-                m_unmanagedVariable.GetAddressField3(out RetVal);
+                m_unmanagedVariable.GetAddressField3(out var RetVal);
                 return RetVal;
             }
         }
@@ -133,8 +126,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         { 
             get
             {
-                int RetVal;
-                m_unmanagedVariable.GetStartOffset(out RetVal);
+                m_unmanagedVariable.GetStartOffset(out var RetVal);
                 return RetVal;
             }
         }
@@ -143,8 +135,7 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         { 
             get
             {
-                int RetVal;
-                m_unmanagedVariable.GetEndOffset(out RetVal);
+                m_unmanagedVariable.GetEndOffset(out var RetVal);
                 return RetVal;
             }
         }

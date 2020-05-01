@@ -4,6 +4,7 @@ using System.Diagnostics.SymbolStore;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using MinDbg.CorMetadata;
 using MinDbg.NativeApi;
 
@@ -32,19 +33,13 @@ namespace MinDbg.CorDebug
         /// Gets the process.
         /// </summary>
         /// <value>The process.</value>
-        private ICorDebugProcess ComProcess
-        {
-            get { return (ICorDebugProcess)this.cocntrl; }
-        }
+        private ICorDebugProcess ComProcess => (ICorDebugProcess)this.cocntrl;
 
         /// <summary>
         /// Returns an enumerator for all modules
         /// loaded for a given process.
         /// </summary>
-        public IEnumerable<CorModule> Modules
-        {
-            get { return modules; }
-        }
+        public IEnumerable<CorModule> Modules => modules;
 
         /* *** Events logic *** */
 
@@ -71,8 +66,7 @@ namespace MinDbg.CorDebug
             ev.Continue = false;
 
             // calls external handlers
-            if (OnBreakpoint != null)
-                OnBreakpoint(ev);
+            OnBreakpoint?.Invoke(ev);
         }
 
         /// <summary>
@@ -111,8 +105,7 @@ namespace MinDbg.CorDebug
 
             ev.Continue = true;
 
-            if (OnModuleLoad != null)
-                OnModuleLoad(ev);
+            OnModuleLoad?.Invoke(ev);
         }
 
         internal void DispatchEvent(CorEventArgs ev)
@@ -123,7 +116,7 @@ namespace MinDbg.CorDebug
 
         /// <summary>
         /// Gets the process from process collection (if it was already
-        /// created) or craetes a new instance of the CorProcess class.
+        /// created) or creates a new instance of the CorProcess class.
         /// </summary>
         /// <param name="coproc">The coproc.</param>
         /// <param name="options">The options.</param>
@@ -132,8 +125,7 @@ namespace MinDbg.CorDebug
         {
             lock (processes)
             {
-                CorProcess proc;
-                processes.TryGetValue(coproc, out proc);
+                processes.TryGetValue(coproc, out var proc);
                 if (proc == null)
                 {
                     proc = new CorProcess(coproc, options);
@@ -163,8 +155,7 @@ namespace MinDbg.CorDebug
         /// <returns>process ID</returns>
         public Int32 GetId()
         {
-            UInt32 id;
-            this.ComProcess.GetID(out id);
+            this.ComProcess.GetID(out var id);
 
             return (Int32)id;
         }
@@ -215,35 +206,31 @@ namespace MinDbg.CorDebug
             foreach (CorModule module in Modules)
             {
                 ISymbolReader symreader = module.GetSymbolReader();
-                if (symreader != null)
+                if (symreader == null) 
+                    continue;
+
+                foreach (ISymbolDocument symdoc in symreader.GetDocuments())
                 {
-                    foreach (ISymbolDocument symdoc in symreader.GetDocuments())
+                    if (String.Compare(symdoc.URL, fileName, true, CultureInfo.InvariantCulture) != 0 &&
+                        String.Compare(System.IO.Path.GetFileName(symdoc.URL), fileName, true, CultureInfo.InvariantCulture) != 0) 
+                        continue;
+
+                    Int32 line = 0;
+                    try
                     {
-                        if (String.Compare(symdoc.URL, fileName, true, CultureInfo.InvariantCulture) == 0 ||
-                            String.Compare(System.IO.Path.GetFileName(symdoc.URL), fileName, true, CultureInfo.InvariantCulture) == 0)
-                        {
-                            Int32 line = 0;
-                            try
-                            {
-                                line = symdoc.FindClosestLine(lineNumber);
-                            }
-                            catch (System.Runtime.InteropServices.COMException ex)
-                            {
-                                if (ex.ErrorCode == (Int32)HResult.E_FAIL)
-                                    continue; // it's not this document
-                            }
-                            ISymbolMethod symmethod = symreader.GetMethodFromDocumentPosition(symdoc, line, 0);
-                            CorFunction func = module.GetFunctionFromToken(symmethod.Token.GetToken());
-                            // IL offset in function code
-                            iloffset = func.GetIPFromPosition(symdoc, line);
-                            if (iloffset == -1)
-                            {
-                                return null;
-                            }
-                            // finally return the code
-                            return func.GetILCode();
-                        }
+                        line = symdoc.FindClosestLine(lineNumber);
                     }
+                    catch (COMException ex)
+                    {
+                        if (ex.ErrorCode == (Int32)HResult.E_FAIL)
+                            continue; // it's not this document
+                    }
+                    ISymbolMethod symmethod = symreader.GetMethodFromDocumentPosition(symdoc, line, 0);
+                    CorFunction func = module.GetFunctionFromToken(symmethod.Token.GetToken());
+                    // IL offset in function code
+                    iloffset = func.GetIPFromPosition(symdoc, line);
+                    // finally return the code
+                    return iloffset == -1 ? null : func.GetILCode();
                 }
             }
             iloffset = -1;

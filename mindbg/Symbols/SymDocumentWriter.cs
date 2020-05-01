@@ -51,14 +51,6 @@ namespace Microsoft.Samples.Debugging.CorSymbolStore
         }
 
         // Public API
-        internal ISymUnmanagedDocumentWriter InternalDocumentWriter
-        {
-            get
-            {
-                return m_unmanagedDocumentWriter;
-            }
-        }
-                                      
- 
+        internal ISymUnmanagedDocumentWriter InternalDocumentWriter => m_unmanagedDocumentWriter;
     }
 }

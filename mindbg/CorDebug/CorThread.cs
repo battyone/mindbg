@@ -27,8 +27,7 @@ namespace MinDbg.CorDebug
         /// <returns>Active stack frame.</returns>
         public CorFrame GetActiveFrame()
         {
-            ICorDebugFrame coframe;
-            cothread.GetActiveFrame(out coframe);
+            cothread.GetActiveFrame(out var coframe);
             return new CorFrame(coframe, options);
         }
 
