@@ -48,6 +48,17 @@ namespace mindgbtest
                 //Console.WriteLine("debugger.CreateProcess() completed");
 
                 process.OnBreakpoint += process_OnBreakpoint;
+                process.OnModuleLoad += ev =>
+                {
+                    Console.WriteLine($"ModuleLoad: {ev.Module.GetName()}");
+                    if (Path.GetFileName(ev.Module.GetName()) != "TestApp-NetFramework.exe") 
+                        return;
+
+                    foreach (var typeDef in ev.Module.TypeDefs())
+                    {
+                        Console.WriteLine($"  TypeDef: {typeDef.Item1} - {typeDef.Item2}");
+                    }
+                };
             }
             Console.ReadKey();
         }

@@ -304,7 +304,7 @@ namespace MinDbg.NativeApi
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
         void IsAttached(out int pbAttached);
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-        void GetName([In] uint cchName, out uint pcchName, [Out, MarshalAs(UnmanagedType.Interface)] ICorDebugAppDomain szName);
+        void GetName([In] uint cchName, out uint pcchName, [MarshalAs(UnmanagedType.LPArray)] char[] szName);
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
         void GetObject([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppObject);
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]

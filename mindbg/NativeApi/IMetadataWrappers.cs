@@ -24,7 +24,7 @@ namespace MinDbg.NativeApi
         //void EnumTypeDefs(out IntPtr phEnum,int[] rTypeDefs,uint cMax, out uint pcTypeDefs);  
         void EnumTypeDefs(
                             ref IntPtr phEnum,
-                            [ComAliasName("mdTypeDef*")] out int rTypeDefs,
+                            [ComAliasName("mdTypeDef*")] out uint rTypeDefs,
                             uint cMax /*must be 1*/,
                             [ComAliasName("ULONG*")] out uint pcTypeDefs);
 

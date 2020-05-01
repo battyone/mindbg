@@ -9,11 +9,18 @@ namespace MinDbg.CorDebug
     public sealed class CorAppDomain : CorController
     {
         private readonly ICorDebugAppDomain codomain;
+        private readonly String name;
 
         internal CorAppDomain(ICorDebugAppDomain codomain, CorDebuggerOptions options) 
             : base(codomain, options) 
         {
             this.codomain = codomain;
+
+            Char[] nameRaw = new Char[300];
+            this.codomain.GetName((UInt32)nameRaw.Length, out var fetched, nameRaw);
+
+            // fetched - 1 because of the ending 0
+            name = new String(nameRaw, 0, (Int32)fetched - 1);
         }
 
         /// <summary>

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.SymbolStore;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.Samples.Debugging.CorSymbolStore;
 using MinDbg.NativeApi;
 
@@ -110,8 +113,10 @@ namespace MinDbg.CorDebug
 
             int token = CorConstants.TokenNotFound;
             if (name.Length == 0)
+            {
                 // this is special global type (we'll return token 0)
                 token = CorConstants.TokenGlobalNamespace;
+            }
             else
             {
                 try
@@ -147,6 +152,58 @@ namespace MinDbg.CorDebug
                 }
             }
             return token;
+        }
+
+        public IEnumerable<Tuple<uint, string>> TypeDefs()
+        {
+            IMetadataImport importer = GetMetadataInterface<IMetadataImport>();
+            IntPtr enumPtr = IntPtr.Zero;
+            var typeDefs = new List<Tuple<uint, string>>();
+            try
+            {
+                while (true)
+                {
+                    // TODO fix this so that we fetch more than one at a time
+                    importer.EnumTypeDefs(ref enumPtr, out uint typeDef, 1, out uint fetched);
+                    if (fetched == 0)
+                        break;
+
+                    comodule.GetClassFromToken(typeDef, out ICorDebugClass _);
+                    var nameBuilder = new StringBuilder(capacity: 256);
+                    GetMetaDataTypeName(importer, (int)typeDef, nameBuilder);
+                    var typeName = nameBuilder.ToString();
+                    typeDefs.Add(Tuple.Create(typeDef, typeName));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                if (enumPtr != IntPtr.Zero)
+                    importer.CloseEnum(enumPtr);
+            }
+
+            return typeDefs;
+        }
+
+        // Copied from the PerfView source code https://github.com/microsoft/perfview/blob/a3f805dca8a3bb3fce2bb0c7a7524615e78bf525/src/HeapDump/GCHeapDumper.cs#L3320-L3339
+        /// <summary>
+        /// This version does not give type parmeters for a generic type.  It also has the '`\d* suffix for generic types.  
+        /// </summary>
+        private static string GetMetaDataTypeName(IMetadataImport metaData, int typeToken, StringBuilder buffer)
+        {
+            metaData.GetTypeDefProps(typeToken, buffer, buffer.Capacity, out var typeNameLen, out var typeAttr, out var extendsToken);
+            string className = buffer.ToString();
+
+            if ((typeAttr & TypeAttributes.VisibilityMask) >= TypeAttributes.NestedPublic)
+            {
+                metaData.GetNestedClassProps(typeToken, out var enclosingClassToken);
+                string enclosingClassName = GetMetaDataTypeName(metaData, enclosingClassToken, buffer);
+                className = enclosingClassName + "." + className;
+            }
+            return className;
         }
 
     }
