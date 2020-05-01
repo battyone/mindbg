@@ -1,38 +1,50 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29609.76
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mindbg", "mindbg\mindbg.csproj", "{E6D52F0B-D431-47AA-9C7D-1F784CB0D9A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mindbgtest", "mindgbtest\mindbgtest.csproj", "{F94AB113-F861-4A9A-A2FE-03FBD45A419E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9C6D4542-F3EF-44E6-BDA5-C9596C5AF485} = {9C6D4542-F3EF-44E6-BDA5-C9596C5AF485}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp-NetFramework", "TestApp-NetFramework\TestApp-NetFramework.csproj", "{9C6D4542-F3EF-44E6-BDA5-C9596C5AF485}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs03
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = mindbg\\mindbg.csproj
-		SccProjectName1 = mindbg
-		SccLocalPath1 = mindbg
-		SccProjectUniqueName2 = mindgbtest\\mindbgtest.csproj
-		SccProjectName2 = mindgbtest
-		SccLocalPath2 = mindgbtest
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E6D52F0B-D431-47AA-9C7D-1F784CB0D9A7}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{E6D52F0B-D431-47AA-9C7D-1F784CB0D9A7}.Debug|x86.ActiveCfg = Debug|x86
 		{E6D52F0B-D431-47AA-9C7D-1F784CB0D9A7}.Debug|x86.Build.0 = Debug|x86
+		{E6D52F0B-D431-47AA-9C7D-1F784CB0D9A7}.Release|Any CPU.ActiveCfg = Release|x86
 		{E6D52F0B-D431-47AA-9C7D-1F784CB0D9A7}.Release|x86.ActiveCfg = Release|x86
 		{E6D52F0B-D431-47AA-9C7D-1F784CB0D9A7}.Release|x86.Build.0 = Release|x86
+		{F94AB113-F861-4A9A-A2FE-03FBD45A419E}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{F94AB113-F861-4A9A-A2FE-03FBD45A419E}.Debug|x86.ActiveCfg = Debug|x86
 		{F94AB113-F861-4A9A-A2FE-03FBD45A419E}.Debug|x86.Build.0 = Debug|x86
+		{F94AB113-F861-4A9A-A2FE-03FBD45A419E}.Release|Any CPU.ActiveCfg = Release|x86
 		{F94AB113-F861-4A9A-A2FE-03FBD45A419E}.Release|x86.ActiveCfg = Release|x86
 		{F94AB113-F861-4A9A-A2FE-03FBD45A419E}.Release|x86.Build.0 = Release|x86
+		{9C6D4542-F3EF-44E6-BDA5-C9596C5AF485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C6D4542-F3EF-44E6-BDA5-C9596C5AF485}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C6D4542-F3EF-44E6-BDA5-C9596C5AF485}.Debug|x86.ActiveCfg = Debug|x86
+		{9C6D4542-F3EF-44E6-BDA5-C9596C5AF485}.Debug|x86.Build.0 = Debug|x86
+		{9C6D4542-F3EF-44E6-BDA5-C9596C5AF485}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C6D4542-F3EF-44E6-BDA5-C9596C5AF485}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C6D4542-F3EF-44E6-BDA5-C9596C5AF485}.Release|x86.ActiveCfg = Release|Any CPU
+		{9C6D4542-F3EF-44E6-BDA5-C9596C5AF485}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B24218D0-0291-4F14-B387-393888A1E8F1}
 	EndGlobalSection
 EndGlobal
