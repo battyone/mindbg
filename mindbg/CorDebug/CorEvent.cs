@@ -47,7 +47,7 @@ namespace MinDbg.CorDebug
         /// <param name="controller">The controller.</param>
         /// <param name="module">The module.</param>
         public CorModuleLoadEventArgs(CorController controller, CorModule module)
-            : base(controller)
+            : base(controller, "ModuleLoad")
         {
             this.module = module;
         }
@@ -74,7 +74,7 @@ namespace MinDbg.CorDebug
         /// <param name="thread">The thread.</param>
         /// <param name="breakpoint">The breakpoint.</param>
         public CorBreakpointEventArgs(CorAppDomain appdomain, CorThread thread, CorBreakpoint breakpoint) 
-            : base(appdomain)
+            : base(appdomain, "Breakpoint")
         {
             this.p_thread = thread;
             this.p_breakpoint = breakpoint;

@@ -116,7 +116,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.StepComplete(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugStepper pStepper, CorDebugStepReason reason)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "StepComplete");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -125,7 +125,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.Break(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "Break");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -134,7 +134,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.Exception(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, int unhandled)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "Exception");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -143,7 +143,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.EvalComplete(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugEval pEval)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "EvalComplete");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -152,7 +152,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.EvalException(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugEval pEval)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "EvalException");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -161,7 +161,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.CreateProcess(ICorDebugProcess pProcess)
             {
-                var ev = new CorEventArgs(CorProcess.GetOrCreateCorProcess(pProcess, p_options));
+                var ev = new CorEventArgs(CorProcess.GetOrCreateCorProcess(pProcess, p_options), "CreateProcess");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -170,7 +170,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.ExitProcess(ICorDebugProcess pProcess)
             {
-                var ev = new CorEventArgs(CorProcess.GetOrCreateCorProcess(pProcess, p_options));
+                var ev = new CorEventArgs(CorProcess.GetOrCreateCorProcess(pProcess, p_options), "ExitProcess");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -180,7 +180,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.CreateThread(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "CreateThread");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -189,7 +189,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.ExitThread(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "ExitThread");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -207,7 +207,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.UnloadModule(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "UnloadModule");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -216,7 +216,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.LoadClass(ICorDebugAppDomain pAppDomain, ICorDebugClass c)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "LoadClass");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -225,7 +225,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.UnloadClass(ICorDebugAppDomain pAppDomain, ICorDebugClass c)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "UnloadClass");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -234,7 +234,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.DebuggerError(ICorDebugProcess pProcess, int errorHR, uint errorCode)
             {
-                var ev = new CorEventArgs(CorProcess.GetOrCreateCorProcess(pProcess, p_options));
+                var ev = new CorEventArgs(CorProcess.GetOrCreateCorProcess(pProcess, p_options), $"DebuggerError: 0x{errorHR:x8}, {errorCode}");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -243,7 +243,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.LogMessage(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, int lLevel, string pLogSwitchName, string pMessage)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), $"LogMessage: {pLogSwitchName} - {pMessage}");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -252,7 +252,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.LogSwitch(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, int lLevel, uint ulReason, string pLogSwitchName, string pParentName)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), $"LogSwitch");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -264,7 +264,7 @@ namespace MinDbg.CorDebug
                 // attach to the appdomain
                 pAppDomain.Attach();
 
-                var ev = new CorEventArgs(CorProcess.GetOrCreateCorProcess(pProcess, p_options));
+                var ev = new CorEventArgs(CorProcess.GetOrCreateCorProcess(pProcess, p_options), "CreateAppDomain");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -273,7 +273,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.ExitAppDomain(ICorDebugProcess pProcess, ICorDebugAppDomain pAppDomain)
             {
-                var ev = new CorEventArgs(CorProcess.GetOrCreateCorProcess(pProcess, p_options));
+                var ev = new CorEventArgs(CorProcess.GetOrCreateCorProcess(pProcess, p_options), "ExitAppDomain");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -282,7 +282,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.LoadAssembly(ICorDebugAppDomain pAppDomain, ICorDebugAssembly pAssembly)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "LoadAssembly");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -291,7 +291,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.UnloadAssembly(ICorDebugAppDomain pAppDomain, ICorDebugAssembly pAssembly)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "UnloadAssembly");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -300,7 +300,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.ControlCTrap(ICorDebugProcess pProcess)
             {
-                var ev = new CorEventArgs(CorProcess.GetOrCreateCorProcess(pProcess, p_options));
+                var ev = new CorEventArgs(CorProcess.GetOrCreateCorProcess(pProcess, p_options), "ControlCTrap");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -309,7 +309,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.NameChange(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "NameChange");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -318,7 +318,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.UpdateModuleSymbols(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule, System.Runtime.InteropServices.ComTypes.IStream pSymbolStream)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "UpdateModuleSymbols");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -328,11 +328,16 @@ namespace MinDbg.CorDebug
             void ICorDebugManagedCallback.EditAndContinueRemap(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugFunction pFunction, int fAccurate)
             {
                 // TODO HandleEvent(ManagedCallbackType.On new CorEventArgs(new CorAppDomain(pAppDomain)));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "EditAndContinueRemap");
+
+                GetOwner(ev.Controller).DispatchEvent(ev);
+
+                FinishEvent(ev);
             }
 
             void ICorDebugManagedCallback.BreakpointSetError(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugBreakpoint pBreakpoint, uint dwError)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "BreakpointSetError");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -341,7 +346,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback2.FunctionRemapOpportunity(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugFunction pOldFunction, ICorDebugFunction pNewFunction, uint oldILOffset)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "FunctionRemapOpportunity");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -365,7 +370,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback2.Exception(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugFrame pFrame, uint nOffset, CorDebugExceptionCallbackType dwEventType, uint dwFlags)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), $"Exception (2) - {dwEventType}");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -374,7 +379,7 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback2.ExceptionUnwind(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, CorDebugExceptionUnwindCallbackType dwEventType, uint dwFlags)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options));
+                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "ExceptionUnwind (2)");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 

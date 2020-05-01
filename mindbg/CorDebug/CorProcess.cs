@@ -110,6 +110,7 @@ namespace MinDbg.CorDebug
 
         internal void DispatchEvent(CorEventArgs ev)
         {
+            Console.WriteLine($"Debugger Event: {ev.EventInfo}");
             // by default do nothing
             ev.Continue = true;
         }
