@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 using MinDbg;
 using MinDbg.CorDebug;
@@ -9,9 +10,6 @@ namespace mindgbtest
 {
     class Program
     {
-        static Regex methodBreakpointRegex = new Regex(@"^((?<module>[\.\w\d]*)!)?(?<class>[\w\d\.]+)\.(?<method>[\w\d]+)$");
-        static Regex codeBreakpointRegex = new Regex(@"^(?<filepath>[\\\.\S]+)\:(?<linenum>\d+)$");
-
         static void PrintUsage()
         {
             Console.WriteLine("Usage: mindbgtest.exe { -p pid | appname }");
@@ -28,13 +26,12 @@ namespace mindgbtest
             if (String.Equals(args[0], "-p", StringComparison.Ordinal))
             {
                 // attaching to the process
-                Int32 pid;
                 if (args.Length != 2)
                 {
                     PrintUsage();
                     return;
                 }
-                if (!Int32.TryParse(args[1], out pid))
+                if (!Int32.TryParse(args[1], out var pid))
                 {
                     PrintUsage();
                     return;
@@ -44,13 +41,19 @@ namespace mindgbtest
             }
             else
             {
+                //Console.WriteLine("Calling DebuggingFacility.CreateDebuggerForExecutable()");
                 var debugger = DebuggingFacility.CreateDebuggerForExecutable(args[0]);
+                //Console.WriteLine("DebuggingFacility.CreateDebuggerForExecutable() completed");
                 var process = debugger.CreateProcess(args[0]);
+                //Console.WriteLine("debugger.CreateProcess() completed");
 
-                process.OnBreakpoint += new MinDbg.CorDebug.CorProcess.CorBreakpointEventHandler(process_OnBreakpoint);
+                process.OnBreakpoint += process_OnBreakpoint;
             }
             Console.ReadKey();
         }
+
+        static Regex methodBreakpointRegex = new Regex(@"^((?<module>[\.\w\d]*)!)?(?<class>[\w\d\.]+)\.(?<method>[\w\d]+)$");
+        static Regex codeBreakpointRegex = new Regex(@"^(?<filepath>[\\\.\S]+)\:(?<linenum>\d+)$");
 
         static void ProcessCommand(CorProcess process)
         {
@@ -70,12 +73,12 @@ namespace mindgbtest
                     {
                         Console.Write("Setting method breakpoint... ");
 
-                        CorFunction func = process.ResolveFunctionName(match.Groups["module"].Value, match.Groups["class"].Value,
-                                                                        match.Groups["method"].Value);
+                        CorFunction func = process.ResolveFunctionName(match.Groups["module"].Value,
+                                                                       match.Groups["class"].Value,
+                                                                       match.Groups["method"].Value);
                         func.CreateBreakpoint().Activate(true);
 
                         Console.WriteLine("done.");
-                        continue;
                     }
                     // try file code:line location
                     match = codeBreakpointRegex.Match(command);
@@ -83,14 +86,12 @@ namespace mindgbtest
                     {
                         Console.Write("Setting code breakpoint...");
 
-                        int offset;
                         CorCode code = process.ResolveCodeLocation(match.Groups["filepath"].Value,
                                                                    Int32.Parse(match.Groups["linenum"].Value),
-                                                                   out offset);
+                                                                   out var offset);
                         code.CreateBreakpoint(offset).Activate(true);
 
                         Console.WriteLine("done.");
-                        continue;
                     }
                 }
                 else if (command.StartsWith("go", StringComparison.Ordinal))
@@ -108,45 +109,41 @@ namespace mindgbtest
 
             // Print three lines of code
             Debug.Assert(source.StartLine < sourceReader.LineCount && source.EndLine < sourceReader.LineCount);
-            if (source.StartLine >= sourceReader.LineCount ||
+            if (source.StartLine >= sourceReader.LineCount || 
                 source.EndLine >= sourceReader.LineCount)
                 return;
 
-            for (Int32 i = source.StartLine; i <= source.EndLine; i++)
+            var extraLines = 3;
+            var startLine = Math.Max(source.StartLine - extraLines, 0);
+            var endLine = Math.Min(source.EndLine + extraLines, sourceReader.LineCount);
+            for (Int32 i = startLine; i <= endLine; i++)
             {
                 String line = sourceReader[i];
-                bool highlightning = false;
 
                 // for each line highlight the code
                 for (Int32 col = 0; col < line.Length; col++)
                 {
-                    if (source.EndColumn == 0 || col >= source.StartColumn - 1 && col <= source.EndColumn)
+                    if ((i >= source.StartLine && i <= source.EndLine) && 
+                        (source.EndColumn == 0 || col >= source.StartColumn - 1 && col <= source.EndColumn))
                     {
-                        // highlight
-                        if (!highlightning)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            highlightning = true;
-                        }
+                        Console.ForegroundColor = ConsoleColor.Green; // Yellow;
                         Console.Write(line[col]);
                     }
                     else
                     {
                         // normal display
-                        if (highlightning)
-                        {
-                            Console.ForegroundColor = oldcolor;
-                            highlightning = false;
-                        }
+                        Console.ForegroundColor = oldcolor;
                         Console.Write(line[col]);
                     }
                 }
+                Console.ForegroundColor = oldcolor;
+                Console.WriteLine();
             }
             Console.ForegroundColor = oldcolor;
             Console.WriteLine();
         }
 
-        static void process_OnBreakpoint(MinDbg.CorDebug.CorBreakpointEventArgs ev)
+        static void process_OnBreakpoint(CorBreakpointEventArgs ev)
         {
             Console.WriteLine("Breakpoint hit.");
 
@@ -154,7 +151,7 @@ namespace mindgbtest
 
             DisplayCurrentSourceCode(source);
 
-            ProcessCommand((ev.Controller is CorProcess) ? (CorProcess)ev.Controller : ((CorAppDomain)ev.Controller).GetProcess());
+            ProcessCommand((ev.Controller is CorProcess process) ? process : ((CorAppDomain)ev.Controller).GetProcess());
         }
     }
 }
