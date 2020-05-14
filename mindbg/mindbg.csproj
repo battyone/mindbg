@@ -64,6 +64,7 @@
     <Compile Include="CorDebug\CorThread.cs" />
     <Compile Include="CorDebug\WrapperBase.cs" />
     <Compile Include="CorMetadata\CorMetadataImport.cs" />
+    <Compile Include="CorMetadata\MetadataFieldInfo.cs" />
     <Compile Include="CorMetadata\MetadataMethodInfo.cs" />
     <Compile Include="CorMetadata\MetadataType.cs" />
     <Compile Include="NativeApi\HResults.cs" />

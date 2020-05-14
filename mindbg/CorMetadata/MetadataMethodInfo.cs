@@ -8,38 +8,22 @@ namespace MinDbg.CorMetadata
 {
     internal sealed class MetadataMethodInfo : MethodInfo
     {
-        private readonly Int32 p_classToken;
-        private readonly IMetadataImport p_importer;
+        private readonly IMetadataImport _importer;
 
         internal MetadataMethodInfo(IMetadataImport importer, Int32 methodToken)
         {
-            p_importer = importer;
+            _importer = importer;
             MetadataToken = methodToken;
 
-            p_importer.GetMethodProps((uint)methodToken,
-                                      out p_classToken,
-                                      null,
-                                      0,
-                                      out var size,
-                                      out _,
-                                      out _,
-                                      out _,
-                                      out _,
-                                      out _);
+            _importer.GetMethodProps((uint)methodToken, out methodToken, null, 0, out var size,
+                                      out _, out _, out _, out _, out _);
 
             StringBuilder szMethodName = new StringBuilder(size);
-            p_importer.GetMethodProps((uint)methodToken,
-                                    out p_classToken,
-                                    szMethodName,
-                                    szMethodName.Capacity,
-                                    out size,
-                                    out _,
-                                    out _,
-                                    out _,
-                                    out _,
-                                    out _);
+            _importer.GetMethodProps((uint)methodToken, out methodToken, szMethodName, szMethodName.Capacity, out size,
+                                    out _, out _, out _, out _, out _);
 
             Name = szMethodName.ToString();
+            MetadataToken = methodToken;
             //m_methodAttributes = (MethodAttributes)pdwAttr;
         }
 

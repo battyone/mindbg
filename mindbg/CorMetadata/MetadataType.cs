@@ -2,19 +2,25 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+using System.Text;
 using MinDbg.NativeApi;
 
 namespace MinDbg.CorMetadata
 {
     internal sealed class MetadataType : Type
     {
-        private readonly IMetadataImport p_importer;
-        private readonly Int32 p_typeToken;
+        private readonly IMetadataImport _importer;
+        private readonly Int32 _typeToken;
 
         internal MetadataType(IMetadataImport importer, Int32 typeToken)
         {
-            p_importer = importer;
-            p_typeToken = typeToken;
+            _importer = importer;
+            _typeToken = typeToken;
+
+            var nameBuilder = new StringBuilder(256);
+            importer.GetTypeDefProps(typeToken, nameBuilder, 256, out var length, out _, out _);
+            Name = nameBuilder.ToString();
+            MetadataToken = typeToken;
         }
 
         public override MethodInfo[] GetMethods(BindingFlags bindingAttr)
@@ -26,18 +32,44 @@ namespace MinDbg.CorMetadata
             {
                 while (true)
                 {
-                    p_importer.EnumMethods(ref hEnum, p_typeToken, out var methodToken, 1, out var size);
+                    _importer.EnumMethods(ref hEnum, _typeToken, out var methodToken, 1, out var size);
                     if (size == 0)
                         break;
-                    methods.Add(new MetadataMethodInfo(p_importer, methodToken));
+                    methods.Add(new MetadataMethodInfo(_importer, methodToken));
                 }
             }
             finally
             {
-                p_importer.CloseEnum(hEnum);
+                _importer.CloseEnum(hEnum);
             }
             return methods.ToArray();
         }
+
+        public override FieldInfo[] GetFields(BindingFlags bindingAttr)
+        {
+            IntPtr hEnum = new IntPtr();
+            var fields = new List<FieldInfo>();
+
+            try
+            {
+                while (true)
+                {
+                    _importer.EnumFields(ref hEnum, _typeToken, out var fieldToken, 1, out var size);
+                    if (size == 0)
+                        break;
+                    fields.Add(new MetadataFieldInfo(_importer, fieldToken));
+                }
+            }
+            finally
+            {
+                _importer.CloseEnum(hEnum);
+            }
+            return fields.ToArray();
+        }
+
+        public override string Name { get; }
+
+        public override int MetadataToken { get; }
 
         public override Assembly Assembly => throw new NotImplementedException();
 
@@ -54,8 +86,6 @@ namespace MinDbg.CorMetadata
         public override string Namespace => throw new NotImplementedException();
 
         public override Type UnderlyingSystemType => throw new NotImplementedException();
-
-        public override string Name => throw new NotImplementedException();
 
         protected override TypeAttributes GetAttributeFlagsImpl()
         {
@@ -88,11 +118,6 @@ namespace MinDbg.CorMetadata
         }
 
         public override FieldInfo GetField(string name, BindingFlags bindingAttr)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override FieldInfo[] GetFields(BindingFlags bindingAttr)
         {
             throw new NotImplementedException();
         }
