@@ -108,6 +108,22 @@ namespace MinDbg.CorDebug
             OnModuleLoad?.Invoke(ev);
         }
 
+        public delegate void CorExceptionEventHandler(CorExceptionEventArgs ev);
+
+        /// <summary>
+        /// Occurs when module is loaded
+        /// </summary>
+        public event CorExceptionEventHandler OnException;
+
+        internal void DispatchEvent(CorExceptionEventArgs ev)
+        {
+            // TODO What do we need here? Continue it true/false?
+            //ev.Continue = false;
+
+            OnException?.Invoke(ev);
+        }
+
+
         internal void DispatchEvent(CorEventArgs ev)
         {
             Console.WriteLine($"Debugger Event: {ev.EventInfo}");

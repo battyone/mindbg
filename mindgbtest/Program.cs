@@ -59,6 +59,11 @@ namespace mindgbtest
                         Console.WriteLine($"  TypeDef: {typeDef.Item1} - {typeDef.Item2}");
                     }
                 };
+
+                process.OnException += ev =>
+                {
+                    Console.WriteLine($"EXCEPTION: {ev.Exception.TypeName} - {ev.Exception.Message}");
+                };
             }
             Console.ReadKey();
         }

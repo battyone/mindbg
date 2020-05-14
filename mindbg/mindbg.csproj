@@ -56,6 +56,7 @@
     <Compile Include="CorDebug\CorDebugger.cs" />
     <Compile Include="CorDebug\CorDebuggerOptions.cs" />
     <Compile Include="CorDebug\CorEvent.cs" />
+    <Compile Include="CorDebug\CorException.cs" />
     <Compile Include="CorDebug\CorFrame.cs" />
     <Compile Include="CorDebug\CorFunction.cs" />
     <Compile Include="CorDebug\CorCode.cs" />

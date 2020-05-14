@@ -148,8 +148,11 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.Exception(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, int unhandled)
             {
-                var ev = new CorEventArgs(new CorAppDomain(pAppDomain, p_options), "Exception");
+                var appDomain = GetCachedAppDomain(pAppDomain);
+                pThread.GetCurrentException(out var currentException);
+                var exception = new CorException(appDomain, currentException, p_options);
 
+                var ev = new CorExceptionEventArgs(appDomain, exception, unhandled);
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
                 FinishEvent(ev);
@@ -212,7 +215,11 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.LoadModule(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule)
             {
-                var ev = new CorModuleLoadEventArgs(GetCachedAppDomain(pAppDomain), new CorModule(pModule, p_options));
+                var appDomain = GetCachedAppDomain(pAppDomain);
+                var module = new CorModule(pModule, p_options);
+                appDomain.LoadModule(pModule, module);
+
+                var ev = new CorModuleLoadEventArgs(appDomain, module);
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
@@ -221,7 +228,9 @@ namespace MinDbg.CorDebug
 
             void ICorDebugManagedCallback.UnloadModule(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule)
             {
-                var ev = new CorEventArgs(GetCachedAppDomain(pAppDomain), "UnloadModule");
+                var appDomain = GetCachedAppDomain(pAppDomain);
+
+                var ev = new CorEventArgs(appDomain, "UnloadModule");
 
                 GetOwner(ev.Controller).DispatchEvent(ev);
 

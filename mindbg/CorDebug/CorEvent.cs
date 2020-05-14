@@ -6,26 +6,23 @@ namespace MinDbg.CorDebug
     /// </summary>
     public class CorEventArgs
     {
-        private readonly CorController _controller;
-        private readonly string _eventInfo;
-
         /// <summary>
         /// Initializes the event instance.
         /// </summary>
         /// <param name="controller">Controller of the debugging process.</param>
         public CorEventArgs(CorController controller, string eventInfo)
         {
-            _controller = controller;
-            _eventInfo = eventInfo;
+            Controller = controller;
+            EventInfo = eventInfo;
         }
 
         /// <summary>
         /// Gets the controller.
         /// </summary>
         /// <value>The controller.</value>
-        public CorController Controller => _controller;
+        public CorController Controller { get; }
 
-        public string EventInfo => _eventInfo;
+        public string EventInfo { get; }
 
         /// <summary>
         /// Gets or sets a value indicating whether debugging process should continue.
@@ -39,8 +36,6 @@ namespace MinDbg.CorDebug
     /// </summary>
     public sealed class CorModuleLoadEventArgs : CorEventArgs
     {
-        private readonly CorModule module;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CorModuleLoadEventArgs"/> class.
         /// </summary>
@@ -49,14 +44,14 @@ namespace MinDbg.CorDebug
         public CorModuleLoadEventArgs(CorController controller, CorModule module)
             : base(controller, "ModuleLoad")
         {
-            this.module = module;
+            Module = module;
         }
 
         /// <summary>
         /// Gets the module.
         /// </summary>
         /// <value>The module.</value>
-        public CorModule Module => this.module;
+        public CorModule Module { get; }
     }
 
     /// <summary>
@@ -64,9 +59,6 @@ namespace MinDbg.CorDebug
     /// </summary>
     public sealed class CorBreakpointEventArgs : CorEventArgs
     {
-        private readonly CorThread p_thread;
-        private readonly CorBreakpoint p_breakpoint;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CorBreakpointEventArgs"/> class.
         /// </summary>
@@ -76,15 +68,21 @@ namespace MinDbg.CorDebug
         public CorBreakpointEventArgs(CorAppDomain appdomain, CorThread thread, CorBreakpoint breakpoint) 
             : base(appdomain, "Breakpoint")
         {
-            this.p_thread = thread;
-            this.p_breakpoint = breakpoint;
+            Thread = thread;
+            Breakpoint = breakpoint;
         }
 
         /// <summary>
         /// Gets the thread.
         /// </summary>
         /// <value>The thread.</value>
-        public CorThread Thread => p_thread;
+        public CorThread Thread { get; }
+
+        /// <summary>
+        /// Gets the breakpoint.
+        /// </summary>
+        /// <value>The breakpoint.</value>
+        public CorBreakpoint Breakpoint { get; }
 
         /// <summary>
         /// Gets the process that the breakpoint was hit on.
@@ -94,11 +92,19 @@ namespace MinDbg.CorDebug
         {
             return ((CorAppDomain)Controller).GetProcess();
         }
+    }
 
-        /// <summary>
-        /// Gets the breakpoint.
-        /// </summary>
-        /// <value>The breakpoint.</value>
-        public CorBreakpoint Breakpoint => p_breakpoint;
+    public sealed class CorExceptionEventArgs : CorEventArgs
+    {
+        public CorExceptionEventArgs(CorAppDomain appdomain, CorException exception, int unhandled)
+            : base(appdomain, "Exception")
+        {
+            Exception = exception;
+            Unhandled = unhandled;
+        }
+
+        public CorException Exception { get; }
+
+        public int Unhandled { get; }
     }
 }
