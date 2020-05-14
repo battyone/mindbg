@@ -32,7 +32,12 @@ namespace MinDbg.NativeApi
         void EnumInterfaceImpls_(IntPtr phEnum, int td);
 
         //STDMETHOD(EnumTypeRefs)(HCORENUM *phEnum, mdTypeRef rTypeRefs[], ULONG cMax, ULONG* pcTypeRefs) PURE;
-        void EnumTypeRefs_();
+        //void EnumTypeRefs_();
+        void EnumTypeRefs(
+                ref IntPtr phEnum,
+                [ComAliasName("mdTypeRef*")] out uint rTypeRefs,
+                uint cMax /*must be 1*/,
+                [ComAliasName("ULONG*")] out uint pcTypeRefs);
 
         //     STDMETHOD(FindTypeDefByName)(           // S_OK or error.
         //         LPCWSTR     szTypeDef,              // [IN] Name of the Type.

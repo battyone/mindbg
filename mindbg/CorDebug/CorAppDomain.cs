@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using MinDbg.NativeApi;
 
 namespace MinDbg.CorDebug
@@ -10,6 +12,8 @@ namespace MinDbg.CorDebug
     {
         private readonly ICorDebugAppDomain codomain;
         private readonly String name;
+        private readonly ConcurrentDictionary<ICorDebugModule, CorModule> moduleCache 
+            = new ConcurrentDictionary<ICorDebugModule, CorModule>();
 
         internal CorAppDomain(ICorDebugAppDomain codomain, CorDebuggerOptions options) 
             : base(codomain, options) 
@@ -40,6 +44,35 @@ namespace MinDbg.CorDebug
             return proc != null ? CorProcess.GetOrCreateCorProcess(proc, options) : null;
         }
 
+        // TODO change to use out param? like GetModule(..) and other APIs?
+        internal CorModule GetCachedModule(ICorDebugModule pModule)
+        {
+            if (moduleCache.TryGetValue(pModule, out var module))
+                return module;
+            return null;
+        }
+
+        internal IEnumerable<CorModule> GetCachedModules()
+        {
+            return moduleCache.Values;
+        }
+
         public String Name => name;
+
+        internal void LoadModule(ICorDebugModule pModule, CorModule module)
+        {
+            if (moduleCache.TryAdd(pModule, module) == false)
+            {
+                Console.WriteLine($"Unable to LOAD Module {pModule}, {module} into the cache");
+            }
+        }
+
+        internal void UnloadModule(ICorDebugModule pModule)
+        {
+            if (moduleCache.TryRemove(pModule, out _))
+            {
+                Console.WriteLine($"Unable to UNLOAD Module {pModule} from the cache");
+            }
+        }
     }
 }

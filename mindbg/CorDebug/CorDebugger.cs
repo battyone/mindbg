@@ -95,8 +95,8 @@ namespace MinDbg.CorDebug
 
             CorProcess GetOwner(CorController controller)
             {
-                if (controller is CorAppDomain)
-                    return ((CorAppDomain)controller).GetProcess();
+                if (controller is CorAppDomain domain)
+                    return domain.GetProcess();
                  
                 return (CorProcess)controller;
             }
@@ -109,7 +109,6 @@ namespace MinDbg.CorDebug
 
             private CorAppDomain GetCachedAppDomain(ICorDebugAppDomain pAppDomain)
             {
-                //return appDomainCache.GetOrAdd(pAppDomain, ad => new CorAppDomain(ad, p_options));
                 if (appDomainCache.TryGetValue(pAppDomain, out var appDomain))
                     return appDomain;
 
@@ -227,6 +226,8 @@ namespace MinDbg.CorDebug
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
                 FinishEvent(ev);
+
+                appDomain.UnloadModule(pModule);
             }
 
             void ICorDebugManagedCallback.LoadClass(ICorDebugAppDomain pAppDomain, ICorDebugClass c)
@@ -280,7 +281,7 @@ namespace MinDbg.CorDebug
                 pAppDomain.Attach();
 
                 if (appDomainCache.TryAdd(pAppDomain, new CorAppDomain(pAppDomain, p_options)) == false)
-                    Console.WriteLine("Unable to add AppDomain during CreateAppDomain callback?!");
+                    Console.WriteLine("Unable to add AppDomain to cache during CreateAppDomain callback?!");
 
                 var ev = new CorEventArgs(CorProcess.GetOrCreateCorProcess(pProcess, p_options), "CreateAppDomain");
 
@@ -296,6 +297,9 @@ namespace MinDbg.CorDebug
                 GetOwner(ev.Controller).DispatchEvent(ev);
 
                 FinishEvent(ev);
+
+                if (appDomainCache.TryRemove(pAppDomain, out _) == false)
+                    Console.WriteLine("Unable to remove AppDomain from cache during ExitAppDomain callback?!");
             }
 
             void ICorDebugManagedCallback.LoadAssembly(ICorDebugAppDomain pAppDomain, ICorDebugAssembly pAssembly)
@@ -416,6 +420,5 @@ namespace MinDbg.CorDebug
         }
 
         #endregion
-
     }
 }

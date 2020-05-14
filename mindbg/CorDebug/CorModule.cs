@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.SymbolStore;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -154,6 +155,7 @@ namespace MinDbg.CorDebug
             return token;
         }
 
+        // TypeDef are Types that are 'Defined' in the current Module
         public IEnumerable<Tuple<uint, string>> TypeDefs()
         {
             IMetadataImport importer = GetMetadataInterface<IMetadataImport>();
@@ -170,9 +172,8 @@ namespace MinDbg.CorDebug
 
                     comodule.GetClassFromToken(typeDef, out ICorDebugClass _);
                     var nameBuilder = new StringBuilder(capacity: 256);
-                    GetMetaDataTypeName(importer, (int)typeDef, nameBuilder);
-                    var typeName = nameBuilder.ToString();
-                    typeDefs.Add(Tuple.Create(typeDef, typeName));
+                    GetMetaDataTypeDefName(importer, (int)typeDef, nameBuilder);
+                    typeDefs.Add(Tuple.Create(typeDef, nameBuilder.ToString()));
                 }
             }
             catch (Exception e)
@@ -188,11 +189,56 @@ namespace MinDbg.CorDebug
             return typeDefs;
         }
 
+        public Tuple<uint, string> GetTypeDef(uint typeDef)
+        {
+            // TODO when caching is implemented, use that instead of calling TypeDefs()!!
+            return TypeDefs().FirstOrDefault(t => t.Item1 == typeDef);
+        }
+
+        // TypeRef Are Type 'References' that point to a TypeDef that is defined in another module
+        public IEnumerable<Tuple<uint, string>> TypeRefs()
+        {
+            IMetadataImport importer = GetMetadataInterface<IMetadataImport>();
+            IntPtr enumPtr = IntPtr.Zero;
+            var typeRefs = new List<Tuple<uint, string>>();
+            try
+            {
+                while (true)
+                {
+                    // TODO fix this so that we fetch more than one at a time
+                    importer.EnumTypeRefs(ref enumPtr, out uint typeRef, 1, out uint fetched);
+                    if (fetched == 0)
+                        break;
+
+                    var nameBuilder = new StringBuilder(capacity: 256);
+                    importer.GetTypeRefProps((int)typeRef, out int ptkResolutionScope, nameBuilder, 256, out int nameLength);
+                    typeRefs.Add(Tuple.Create(typeRef, nameBuilder.ToString()));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                if (enumPtr != IntPtr.Zero)
+                    importer.CloseEnum(enumPtr);
+            }
+
+            return typeRefs;
+        }
+
+        public Tuple<uint, string> GetTypeRef(uint typeDef)
+        {
+            // TODO when caching is implemented, use that instead of calling TypeRefs()!!
+            return TypeRefs().FirstOrDefault(t => t.Item1 == typeDef);
+        }
+
         // Copied from the PerfView source code https://github.com/microsoft/perfview/blob/a3f805dca8a3bb3fce2bb0c7a7524615e78bf525/src/HeapDump/GCHeapDumper.cs#L3320-L3339
         /// <summary>
-        /// This version does not give type parmeters for a generic type.  It also has the '`\d* suffix for generic types.  
+        /// This version does not give type parameters for a generic type.  It also has the '`\d* suffix for generic types.  
         /// </summary>
-        private static string GetMetaDataTypeName(IMetadataImport metaData, int typeToken, StringBuilder buffer)
+        private static string GetMetaDataTypeDefName(IMetadataImport metaData, int typeToken, StringBuilder buffer)
         {
             metaData.GetTypeDefProps(typeToken, buffer, buffer.Capacity, out var typeNameLen, out var typeAttr, out var extendsToken);
             string className = buffer.ToString();
@@ -200,11 +246,10 @@ namespace MinDbg.CorDebug
             if ((typeAttr & TypeAttributes.VisibilityMask) >= TypeAttributes.NestedPublic)
             {
                 metaData.GetNestedClassProps(typeToken, out var enclosingClassToken);
-                string enclosingClassName = GetMetaDataTypeName(metaData, enclosingClassToken, buffer);
+                string enclosingClassName = GetMetaDataTypeDefName(metaData, enclosingClassToken, buffer);
                 className = enclosingClassName + "." + className;
             }
             return className;
         }
-
     }
 }
